@@ -1,0 +1,812 @@
+```html
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal K3 Teknik Otomasi PPNS</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons (untuk icon modern yang bersih) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        dark: '#121212',
+                        darker: '#0a0a0a',
+                        card: '#1E1E1E',
+                        safety: '#FACC15', // Kuning Peringatan
+                        safetyHover: '#EAB308',
+                        navy: '#0A1930', // Biru Maritim Gelap
+                        navyLight: '#112240', // Biru Maritim Sedikit Terang
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Styles & Utilities */
+        body {
+            background-color: #121212;
+            color: #e5e7eb;
+        }
+
+        /* Hide scrollbar for clean UI but keep functionality */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #121212;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #FACC15;
+        }
+
+        /* Accordion transition for smooth opening */
+        .accordion-content {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.3s ease-in-out;
+        }
+        .accordion-content.open {
+            grid-template-rows: 1fr;
+        }
+        .accordion-inner {
+            overflow: hidden;
+        }
+
+        /* Checkbox custom style */
+        .checklist-item input[type="checkbox"]:checked + label {
+            text-decoration: line-through;
+            color: #9CA3AF;
+        }
+    </style>
+</head>
+<body class="antialiased bg-dark text-gray-200">
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="min-h-screen flex flex-col justify-center items-center relative overflow-hidden">
+        <!-- Background Referensi Gambar -->
+        <img src="150781.jpg" alt="Background Halaman Login" class="absolute inset-0 w-full h-full object-cover opacity-20 blur-md mix-blend-overlay" onerror="this.style.display='none'">
+        <div class="absolute inset-0 bg-gradient-to-br from-navy/90 to-darker/95 z-0"></div>
+        
+        <div class="z-10 bg-card p-8 sm:p-10 rounded-2xl border border-white/10 shadow-2xl max-w-md w-full mx-4 transform transition-all relative overflow-hidden">
+            <!-- Dekorasi Atas -->
+            <div class="absolute top-0 left-0 w-full h-1.5 bg-safety"></div>
+            
+            <div class="text-center mb-8 flex flex-col items-center">
+                <div class="w-16 h-16 bg-safety/10 rounded-full flex items-center justify-center mb-4 border border-safety/30 shadow-[0_0_15px_rgba(250,204,21,0.2)]">
+                    <svg class="h-8 w-8 text-safety" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-white mb-2">Selamat Datang</h2>
+                <p class="text-gray-400 text-sm">Masuk untuk mengakses portal edukasi dan manajemen K3 Laboratorium Otomasi.</p>
+            </div>
+            
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <div class="mb-5">
+                    <label class="block text-gray-400 text-sm mb-2 font-medium">Username / NRP</label>
+                    <div class="relative">
+                        <i class="ph ph-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-lg"></i>
+                        <input type="text" id="username" class="w-full bg-darker border border-white/10 rounded-lg py-3 pl-10 pr-3 text-white focus:outline-none focus:border-safety transition-colors" placeholder="Ketik PPNS..." required>
+                    </div>
+                </div>
+                <div class="mb-8">
+                    <label class="block text-gray-400 text-sm mb-2 font-medium">Password</label>
+                    <div class="relative">
+                        <i class="ph ph-lock-key absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-lg"></i>
+                        <input type="password" id="password" class="w-full bg-darker border border-white/10 rounded-lg py-3 pl-10 pr-3 text-white focus:outline-none focus:border-safety transition-colors" placeholder="Ketik SUCCESS..." required>
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-safety hover:bg-safetyHover text-darker font-bold py-3.5 rounded-lg transition-all shadow-lg shadow-safety/20 transform hover:-translate-y-0.5">
+                    Login Sekarang <i class="ph-bold ph-arrow-right inline-block ml-1"></i>
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center border-t border-white/10 pt-4">
+                <p class="text-xs text-gray-500">Demo Akun: User <span class="text-white font-mono">PPNS</span> | Pass <span class="text-white font-mono">SUCCESS</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP WRAPPER (Sembunyi sebelum login) -->
+    <div id="main-app" class="hidden flex-col min-h-screen w-full">
+
+        <!-- HEADER & NAVIGATION -->
+        <nav class="fixed w-full z-50 bg-darker/90 backdrop-blur-md border-b border-white/10 transition-all duration-300">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-20">
+                    <div class="flex-shrink-0 flex items-center gap-3 cursor-pointer">
+                        <div class="w-10 h-10 bg-safety rounded-lg flex items-center justify-center font-bold text-darker text-xl shadow-lg shadow-safety/20">K3</div>
+                        <span class="font-bold text-xl tracking-tight text-white hidden sm:block">OTOMASI PPNS</span>
+                    </div>
+                    
+                    <!-- Desktop Menu -->
+                    <div class="hidden md:flex items-center space-x-8">
+                        <a href="#beranda" class="text-gray-300 hover:text-safety transition-colors text-sm font-medium">Beranda</a>
+                        <a href="#panduan-apd" class="text-gray-300 hover:text-safety transition-colors text-sm font-medium">Panduan APD</a>
+                        <a href="#sop-praktikum" class="text-gray-300 hover:text-safety transition-colors text-sm font-medium">SOP Praktikum</a>
+                        <a href="#identifikasi-bahaya" class="text-gray-300 hover:text-safety transition-colors text-sm font-medium">Identifikasi Bahaya</a>
+                        <a href="#kuis" class="bg-safety/10 text-safety border border-safety/30 hover:bg-safety hover:text-darker px-4 py-2 rounded-lg font-semibold transition-all">Kuis K3</a>
+                    </div>
+                    
+                    <!-- Mobile Menu Button -->
+                    <div class="md:hidden flex items-center">
+                        <button id="mobile-menu-btn" class="text-gray-300 hover:text-white focus:outline-none p-2">
+                            <i class="ph ph-list text-3xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mobile Menu Panel -->
+            <div id="mobile-menu" class="hidden md:hidden bg-darker border-b border-white/10">
+                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                    <a href="#beranda" class="mobile-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/5">Beranda</a>
+                    <a href="#panduan-apd" class="mobile-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/5">Panduan APD</a>
+                    <a href="#sop-praktikum" class="mobile-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/5">SOP Praktikum</a>
+                    <a href="#identifikasi-bahaya" class="mobile-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/5">Identifikasi Bahaya</a>
+                    <a href="#kuis" class="mobile-link block px-3 py-2 rounded-md text-base font-medium text-safety hover:text-safetyHover hover:bg-white/5">Kuis K3</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- HERO SECTION -->
+        <section id="beranda" class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden flex flex-col items-center justify-center min-h-[80vh]">
+            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-navyLight/40 via-dark to-dark -z-10"></div>
+            
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center flex flex-col items-center">
+                <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-6 leading-tight text-center">
+                    Portal K3 Teknik <br class="hidden md:block" /> 
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-safety to-yellow-200">Otomasi PPNS</span>
+                </h1>
+                <p class="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed text-center">
+                    Mewujudkan Lingkungan Praktikum Cerdas, Aman, dan Terkendali. Kenali potensi bahaya dan pahami prosedur keselamatan sebelum memasuki laboratorium.
+                </p>
+                <a href="#panduan-apd" class="inline-flex items-center justify-center gap-2 bg-safety hover:bg-safetyHover text-darker font-bold py-3 px-8 rounded-lg shadow-lg shadow-safety/20 transition-all transform hover:-translate-y-1">
+                    Mulai Belajar K3
+                    <i class="ph ph-arrow-down-bold"></i>
+                </a>
+            </div>
+        </section>
+
+    <!-- SECTION 1: PANDUAN APD WAJIB -->
+    <section id="panduan-apd" class="py-20 bg-darker">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-white mb-4">Alat Pelindung Diri (APD) Wajib</h2>
+                <div class="w-16 h-1 bg-safety mx-auto rounded-full"></div>
+                <p class="mt-4 text-gray-400 max-w-2xl mx-auto">Kenali perlengkapan wajib yang harus digunakan sebelum melakukan praktikum di lab otomasi kelistrikan.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- APD Card 1 -->
+                <div class="group relative bg-card rounded-2xl overflow-hidden border border-white/10 hover:border-safety/50 transition-all duration-300">
+                    <div class="p-8 flex flex-col items-center justify-center h-64 relative z-10 transition-transform duration-500 group-hover:-translate-y-4">
+                        <i class="ph ph-t-shirt text-6xl text-gray-300 mb-4 group-hover:text-safety transition-colors"></i>
+                        <h3 class="text-xl font-bold text-white">Wearpack</h3>
+                    </div>
+                    <!-- Hover Content -->
+                    <div class="absolute inset-0 bg-navyLight p-6 flex flex-col justify-end translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out z-20">
+                        <h4 class="text-safety font-bold mb-2">Baju Bengkel</h4>
+                        <p class="text-sm text-gray-300">Melindungi tubuh dari kotoran, bahan kimia ringan, serta menghindari pakaian tersangkut pada mesin atau konveyor yang bergerak.</p>
+                    </div>
+                </div>
+
+                <!-- APD Card 2 -->
+                <div class="group relative bg-card rounded-2xl overflow-hidden border border-white/10 hover:border-safety/50 transition-all duration-300">
+                    <div class="p-8 flex flex-col items-center justify-center h-64 relative z-10 transition-transform duration-500 group-hover:-translate-y-4">
+                        <i class="ph ph-boot text-6xl text-gray-300 mb-4 group-hover:text-safety transition-colors"></i>
+                        <h3 class="text-xl font-bold text-white">Safety Shoes</h3>
+                    </div>
+                    <!-- Hover Content -->
+                    <div class="absolute inset-0 bg-navyLight p-6 flex flex-col justify-end translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out z-20">
+                        <h4 class="text-safety font-bold mb-2">Sepatu Keselamatan</h4>
+                        <p class="text-sm text-gray-300">Berbahan isolator untuk menahan tegangan listrik, serta ujung besi (steel toe) untuk melindungi kaki dari kejatuhan benda keras/berat.</p>
+                    </div>
+                </div>
+
+                <!-- APD Card 3 -->
+                <div class="group relative bg-card rounded-2xl overflow-hidden border border-white/10 hover:border-safety/50 transition-all duration-300">
+                    <div class="p-8 flex flex-col items-center justify-center h-64 relative z-10 transition-transform duration-500 group-hover:-translate-y-4">
+                        <i class="ph ph-hand-swipe-left text-6xl text-gray-300 mb-4 group-hover:text-safety transition-colors"></i>
+                        <h3 class="text-xl font-bold text-white">Sarung Tangan</h3>
+                    </div>
+                    <!-- Hover Content -->
+                    <div class="absolute inset-0 bg-navyLight p-6 flex flex-col justify-end translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out z-20">
+                        <h4 class="text-safety font-bold mb-2">Sarung Tangan Isolator</h4>
+                        <p class="text-sm text-gray-300">Wajib digunakan saat menangani komponen beraliran listrik, merakit panel, atau saat ada risiko tergores plat tajam.</p>
+                    </div>
+                </div>
+
+                <!-- APD Card 4 -->
+                <div class="group relative bg-card rounded-2xl overflow-hidden border border-white/10 hover:border-safety/50 transition-all duration-300">
+                    <div class="p-8 flex flex-col items-center justify-center h-64 relative z-10 transition-transform duration-500 group-hover:-translate-y-4">
+                        <i class="ph ph-goggles text-6xl text-gray-300 mb-4 group-hover:text-safety transition-colors"></i>
+                        <h3 class="text-xl font-bold text-white">Kacamata Safety</h3>
+                    </div>
+                    <!-- Hover Content -->
+                    <div class="absolute inset-0 bg-navyLight p-6 flex flex-col justify-end translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out z-20">
+                        <h4 class="text-safety font-bold mb-2">Pelindung Mata</h4>
+                        <p class="text-sm text-gray-300">Melindungi mata dari cipratan timah saat proses soldering, serpihan kabel saat pemotongan, atau debu partikel di laboratorium.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: SOP PRAKTIKUM -->
+    <section id="sop-praktikum" class="py-20 bg-dark">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-white mb-4">SOP Praktikum Terstruktur</h2>
+                <div class="w-16 h-1 bg-safety mx-auto rounded-full"></div>
+                <p class="mt-4 text-gray-400">Langkah demi langkah keselamatan dari sebelum hingga sesudah aktivitas praktikum.</p>
+                
+                <!-- Fitur Lihat SOP -->
+                <button onclick="lihatSOP()" class="mt-6 inline-flex items-center gap-2 bg-navyLight hover:bg-navy border border-safety text-safety hover:text-white font-bold py-2.5 px-6 rounded-lg transition-colors shadow-lg shadow-safety/10">
+                    <i class="ph-bold ph-book-open-text text-xl"></i> Lihat Ringkasan SOP Khusus
+                </button>
+            </div>
+
+            <!-- Timeline -->
+            <div class="relative border-l-2 border-white/10 ml-4 md:ml-8 space-y-12">
+                
+                <!-- Item 1: Sebelum -->
+                <div class="relative pl-8 md:pl-12">
+                    <div class="absolute -left-[11px] top-1 h-5 w-5 rounded-full bg-safety border-4 border-dark"></div>
+                    <div class="bg-card p-6 md:p-8 rounded-xl border border-white/5 hover:border-white/20 transition-colors">
+                        <div class="inline-flex items-center gap-2 text-safety font-bold mb-3">
+                            <i class="ph-fill ph-check-circle"></i> FASE 1: Sebelum Praktikum
+                        </div>
+                        <h3 class="text-xl font-semibold text-white mb-3">Persiapan & Pengecekan Awal</h3>
+                        <ul class="space-y-2 text-gray-300">
+                            <li class="flex items-start gap-2"><i class="ph ph-caret-right text-safety mt-1"></i> Memastikan APD lengkap dan terpakai dengan benar.</li>
+                            <li class="flex items-start gap-2"><i class="ph ph-caret-right text-safety mt-1"></i> Menerapkan aturan Lockout/Tagout (LOTO) jika panel kontrol sedang diperbaiki atau dalam kondisi tidak aman.</li>
+                            <li class="flex items-start gap-2"><i class="ph ph-caret-right text-safety mt-1"></i> Memastikan meja kerja bersih dan kering untuk menghindari korsleting.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Item 2: Saat -->
+                <div class="relative pl-8 md:pl-12">
+                    <div class="absolute -left-[11px] top-1 h-5 w-5 rounded-full bg-blue-500 border-4 border-dark"></div>
+                    <div class="bg-card p-6 md:p-8 rounded-xl border border-white/5 hover:border-white/20 transition-colors">
+                        <div class="inline-flex items-center gap-2 text-blue-400 font-bold mb-3">
+                            <i class="ph-fill ph-lightning"></i> FASE 2: Saat Praktikum
+                        </div>
+                        <h3 class="text-xl font-semibold text-white mb-3">Eksekusi & Kewaspadaan</h3>
+                        <ul class="space-y-2 text-gray-300">
+                            <li class="flex items-start gap-2"><i class="ph ph-caret-right text-blue-400 mt-1"></i> Melakukan simulasi program PLC secara offline (tanpa beban) terlebih dahulu sebelum dikoneksikan ke hardware aktuator.</li>
+                            <li class="flex items-start gap-2"><i class="ph ph-caret-right text-blue-400 mt-1"></i> Penanganan Tegangan Ekstra Hati-hati: Pastikan tangan kering saat mengoperasikan sirkuit bertegangan 220V/380V.</li>
+                            <li class="flex items-start gap-2"><i class="ph ph-caret-right text-blue-400 mt-1"></i> Selalu dampingi pengujian sistem dengan instruktur/asisten lab.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Item 3: Sesudah -->
+                <div class="relative pl-8 md:pl-12">
+                    <div class="absolute -left-[11px] top-1 h-5 w-5 rounded-full bg-green-500 border-4 border-dark"></div>
+                    <div class="bg-card p-6 md:p-8 rounded-xl border border-white/5 hover:border-white/20 transition-colors">
+                        <div class="inline-flex items-center gap-2 text-green-400 font-bold mb-3">
+                            <i class="ph-fill ph-broom"></i> FASE 3: Sesudah Praktikum
+                        </div>
+                        <h3 class="text-xl font-semibold text-white mb-3">Pembersihan & Isolasi Energi</h3>
+                        <ul class="space-y-2 text-gray-300">
+                            <li class="flex items-start gap-2"><i class="ph ph-caret-right text-green-400 mt-1"></i> Matikan semua sumber daya (Main Switch OFF) pada panel maupun PC.</li>
+                            <li class="flex items-start gap-2"><i class="ph ph-caret-right text-green-400 mt-1"></i> Lepaskan kabel jumper dan merapikan alat ukur (multimeter, osiloskop) ke tempat semula.</li>
+                            <li class="flex items-start gap-2"><i class="ph ph-caret-right text-green-400 mt-1"></i> Laporkan segera jika ada alat ukur/komponen yang rusak selama praktikum.</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: IDENTIFIKASI BAHAYA (ACCORDION) -->
+    <section id="identifikasi-bahaya" class="py-20 bg-darker">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-white mb-4">Identifikasi Bahaya <span class="text-safety">(Hazard ID)</span></h2>
+                <div class="w-16 h-1 bg-safety mx-auto rounded-full"></div>
+                <p class="mt-4 text-gray-400">Pahami sumber risiko utama di laboratorium otomasi dan kelistrikan.</p>
+            </div>
+
+            <div class="space-y-4">
+                <!-- Accordion Item 1 -->
+                <div class="bg-card border border-white/10 rounded-xl overflow-hidden">
+                    <button class="w-full px-6 py-5 flex justify-between items-center text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-safety" onclick="toggleAccordion('acc-1', 'icon-1')">
+                        <div class="flex items-center gap-4 text-white font-semibold text-lg">
+                            <div class="p-2 bg-red-500/20 text-red-400 rounded-lg"><i class="ph-fill ph-plugs text-xl"></i></div>
+                            Bahaya Elektrikal
+                        </div>
+                        <i id="icon-1" class="ph ph-caret-down text-gray-400 transition-transform duration-300"></i>
+                    </button>
+                    <div id="acc-1" class="accordion-content">
+                        <div class="accordion-inner px-6 pb-5 pt-0 text-gray-300">
+                            <div class="h-px w-full bg-white/10 mb-4"></div>
+                            <p class="mb-2">Meliputi segala potensi bahaya yang ditimbulkan oleh arus dan tegangan listrik:</p>
+                            <ul class="list-disc pl-5 space-y-1 text-sm md:text-base text-gray-400">
+                                <li><strong>Sengatan Listrik (Electric Shock):</strong> Terjadi jika menyentuh konduktor bertegangan secara langsung tanpa pelindung.</li>
+                                <li><strong>Korsleting (Short Circuit):</strong> Sambungan pendek antar fasa atau fasa ke netral yang bisa memicu bunga api atau ledakan panel (arc flash).</li>
+                                <li><strong>Mitigasi:</strong> Gunakan APD standar, pastikan grounding terpasang sempurna, dan hindari air/kelembaban tinggi di area panel.</li>
+                            </ul>
+                            
+                            <!-- Fitur Referensi K3 Elektrikal Manual -->
+                            <div class="mt-6 rounded-xl border border-white/10 bg-dark p-4">
+                                <p class="text-safety font-semibold mb-2"><i class="ph-fill ph-warning text-lg"></i> Panduan Manual Kelistrikan:</p>
+                                <ul class="list-decimal pl-5 space-y-1 text-sm text-gray-400">
+                                    <li>Pastikan panel utama dalam kondisi <strong class="text-white">OFF</strong> sebelum membuka tutup panel kendali.</li>
+                                    <li>Guna alat ukur (multimeter/test pen) dengan standar minimal <strong class="text-white">CAT III 600V</strong>.</li>
+                                    <li>Dilarang keras menjumper (bypass) sekering atau MCB (Miniature Circuit Breaker).</li>
+                                    <li>Pahami lokasi tombol <strong class="text-red-400">Emergency Stop</strong> di setiap meja kerja sebelum menyalakan daya.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accordion Item 2 -->
+                <div class="bg-card border border-white/10 rounded-xl overflow-hidden">
+                    <button class="w-full px-6 py-5 flex justify-between items-center text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-safety" onclick="toggleAccordion('acc-2', 'icon-2')">
+                        <div class="flex items-center gap-4 text-white font-semibold text-lg">
+                            <div class="p-2 bg-orange-500/20 text-orange-400 rounded-lg"><i class="ph-fill ph-gear text-xl"></i></div>
+                            Bahaya Mekanikal
+                        </div>
+                        <i id="icon-2" class="ph ph-caret-down text-gray-400 transition-transform duration-300"></i>
+                    </button>
+                    <div id="acc-2" class="accordion-content">
+                        <div class="accordion-inner px-6 pb-5 pt-0 text-gray-300">
+                            <div class="h-px w-full bg-white/10 mb-4"></div>
+                            <p class="mb-2">Risiko yang berasal dari pergerakan fisik alat atau bagian mesin:</p>
+                            <ul class="list-disc pl-5 space-y-1 text-sm md:text-base text-gray-400">
+                                <li><strong>Terjepit / Tergulung:</strong> Bahaya dari bagian mesin yang berputar seperti motor servo, konveyor, atau puli.</li>
+                                <li><strong>Benturan Aktuator:</strong> Silinder pneumatik atau hidrolik yang dapat menendang keluar secara mendadak jika tekanan udara masuk tiba-tiba.</li>
+                                <li><strong>Mitigasi:</strong> Pasang pelindung mesin (guarding), jangan memakai perhiasan berlebih atau pakaian longgar, jaga jarak aman dari moving parts.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accordion Item 3 -->
+                <div class="bg-card border border-white/10 rounded-xl overflow-hidden">
+                    <button class="w-full px-6 py-5 flex justify-between items-center text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-safety" onclick="toggleAccordion('acc-3', 'icon-3')">
+                        <div class="flex items-center gap-4 text-white font-semibold text-lg">
+                            <div class="p-2 bg-purple-500/20 text-purple-400 rounded-lg"><i class="ph-fill ph-person-simple text-xl"></i></div>
+                            Bahaya Ergonomis
+                        </div>
+                        <i id="icon-3" class="ph ph-caret-down text-gray-400 transition-transform duration-300"></i>
+                    </button>
+                    <div id="acc-3" class="accordion-content">
+                        <div class="accordion-inner px-6 pb-5 pt-0 text-gray-300">
+                            <div class="h-px w-full bg-white/10 mb-4"></div>
+                            <p class="mb-2">Berhubungan dengan interaksi antara pekerja dan lingkungan kerjanya:</p>
+                            <ul class="list-disc pl-5 space-y-1 text-sm md:text-base text-gray-400">
+                                <li><strong>Postur Statis:</strong> Duduk atau membungkuk terlalu lama saat memprogram PLC/HMI di depan PC.</li>
+                                <li><strong>Kelelahan Mata:</strong> Menatap layar PC atau panel indikator terlalu lama dengan pencahayaan ruangan yang tidak memadai.</li>
+                                <li><strong>Mitigasi:</strong> Terapkan metode kerja 20-20-20 (istirahat mata tiap 20 menit), atur ketinggian kursi, dan lakukan peregangan otot ringan.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: FITUR INTERAKTIF -->
+    <section id="kuis" class="py-20 bg-dark relative border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                
+                <!-- KIRI: Checklist K3 -->
+                <div class="bg-card p-6 md:p-8 rounded-2xl border border-white/10 shadow-xl">
+                    <div class="flex items-center gap-3 mb-6">
+                        <i class="ph-fill ph-clipboard-text text-3xl text-safety"></i>
+                        <h3 class="text-2xl font-bold text-white">Checklist Kesiapan</h3>
+                    </div>
+                    <p class="text-gray-400 mb-6 text-sm md:text-base">Centang semua daftar di bawah ini sebelum Anda memulai praktikum untuk memastikan keselamatan kerja.</p>
+                    
+                    <div class="space-y-4" id="checklist-container">
+                        <div class="checklist-item flex items-center gap-3 p-3 bg-dark rounded-lg border border-white/5">
+                            <input type="checkbox" id="check-1" class="w-5 h-5 accent-safety rounded bg-dark border-gray-600 focus:ring-safety cursor-pointer" onclick="updateChecklist()">
+                            <label for="check-1" class="cursor-pointer select-none font-medium transition-colors">Wearpack keselamatan sudah dipakai & dikancingkan.</label>
+                        </div>
+                        <div class="checklist-item flex items-center gap-3 p-3 bg-dark rounded-lg border border-white/5">
+                            <input type="checkbox" id="check-2" class="w-5 h-5 accent-safety rounded bg-dark border-gray-600 focus:ring-safety cursor-pointer" onclick="updateChecklist()">
+                            <label for="check-2" class="cursor-pointer select-none font-medium transition-colors">Safety shoes isolator telah digunakan.</label>
+                        </div>
+                        <div class="checklist-item flex items-center gap-3 p-3 bg-dark rounded-lg border border-white/5">
+                            <input type="checkbox" id="check-3" class="w-5 h-5 accent-safety rounded bg-dark border-gray-600 focus:ring-safety cursor-pointer" onclick="updateChecklist()">
+                            <label for="check-3" class="cursor-pointer select-none font-medium transition-colors">Meja kerja dalam keadaan kering dan bersih.</label>
+                        </div>
+                        <div class="checklist-item flex items-center gap-3 p-3 bg-dark rounded-lg border border-white/5">
+                            <input type="checkbox" id="check-4" class="w-5 h-5 accent-safety rounded bg-dark border-gray-600 focus:ring-safety cursor-pointer" onclick="updateChecklist()">
+                            <label for="check-4" class="cursor-pointer select-none font-medium transition-colors">Kabel grounding modul panel terpasang dengan baik.</label>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="mt-8">
+                        <div class="flex justify-between text-sm mb-2 text-gray-400">
+                            <span>Status Kesiapan:</span>
+                            <span id="checklist-percentage">0%</span>
+                        </div>
+                        <div class="w-full bg-dark rounded-full h-2.5">
+                            <div id="checklist-progress" class="bg-safety h-2.5 rounded-full transition-all duration-500 w-0"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KANAN: Kuis Mini -->
+                <div class="bg-navyLight p-6 md:p-8 rounded-2xl border border-white/10 shadow-xl">
+                    <div class="flex items-center gap-3 mb-6">
+                        <i class="ph-fill ph-brain text-3xl text-safety"></i>
+                        <h3 class="text-2xl font-bold text-white">Kuis Mini K3 Otomasi</h3>
+                    </div>
+                    
+                    <form id="quiz-form" onsubmit="submitQuiz(event)">
+                        <!-- Soal 1 -->
+                        <div class="mb-6">
+                            <p class="font-semibold text-white mb-3">1. Apa fungsi utama dari prosedur LOTO (Lockout/Tagout)?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-start gap-3 p-3 rounded-lg bg-dark/50 hover:bg-dark border border-transparent hover:border-white/10 cursor-pointer transition-colors">
+                                    <input type="radio" name="q1" value="A" class="mt-1 accent-safety" required>
+                                    <span class="text-gray-300 text-sm">Menyalakan mesin secara otomatis dari jarak jauh.</span>
+                                </label>
+                                <label class="flex items-start gap-3 p-3 rounded-lg bg-dark/50 hover:bg-dark border border-transparent hover:border-white/10 cursor-pointer transition-colors">
+                                    <input type="radio" name="q1" value="B" class="mt-1 accent-safety">
+                                    <span class="text-gray-300 text-sm">Mengisolasi sumber energi untuk mencegah mesin hidup tiba-tiba saat diperbaiki.</span>
+                                </label>
+                                <label class="flex items-start gap-3 p-3 rounded-lg bg-dark/50 hover:bg-dark border border-transparent hover:border-white/10 cursor-pointer transition-colors">
+                                    <input type="radio" name="q1" value="C" class="mt-1 accent-safety">
+                                    <span class="text-gray-300 text-sm">Membersihkan kotoran di area panel listrik.</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Soal 2 -->
+                        <div class="mb-6">
+                            <p class="font-semibold text-white mb-3">2. Bahaya apa yang terjadi jika praktikan menyentuh plat panel tanpa sarung tangan?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-start gap-3 p-3 rounded-lg bg-dark/50 hover:bg-dark border border-transparent hover:border-white/10 cursor-pointer transition-colors">
+                                    <input type="radio" name="q2" value="A" class="mt-1 accent-safety" required>
+                                    <span class="text-gray-300 text-sm">Bahaya Ergonomis</span>
+                                </label>
+                                <label class="flex items-start gap-3 p-3 rounded-lg bg-dark/50 hover:bg-dark border border-transparent hover:border-white/10 cursor-pointer transition-colors">
+                                    <input type="radio" name="q2" value="B" class="mt-1 accent-safety">
+                                    <span class="text-gray-300 text-sm">Bahaya Elektrikal (Shock) dan Mekanikal (Tergores)</span>
+                                </label>
+                                <label class="flex items-start gap-3 p-3 rounded-lg bg-dark/50 hover:bg-dark border border-transparent hover:border-white/10 cursor-pointer transition-colors">
+                                    <input type="radio" name="q2" value="C" class="mt-1 accent-safety">
+                                    <span class="text-gray-300 text-sm">Bahaya Radiasi</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Soal 3 -->
+                        <div class="mb-8">
+                            <p class="font-semibold text-white mb-3">3. Sebelum aktuator disambungkan ke output PLC, apa yang harus dilakukan?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-start gap-3 p-3 rounded-lg bg-dark/50 hover:bg-dark border border-transparent hover:border-white/10 cursor-pointer transition-colors">
+                                    <input type="radio" name="q3" value="A" class="mt-1 accent-safety" required>
+                                    <span class="text-gray-300 text-sm">Langsung menyalakan tegangan 220V.</span>
+                                </label>
+                                <label class="flex items-start gap-3 p-3 rounded-lg bg-dark/50 hover:bg-dark border border-transparent hover:border-white/10 cursor-pointer transition-colors">
+                                    <input type="radio" name="q3" value="B" class="mt-1 accent-safety">
+                                    <span class="text-gray-300 text-sm">Meninggalkan ruangan sejenak.</span>
+                                </label>
+                                <label class="flex items-start gap-3 p-3 rounded-lg bg-dark/50 hover:bg-dark border border-transparent hover:border-white/10 cursor-pointer transition-colors">
+                                    <input type="radio" name="q3" value="C" class="mt-1 accent-safety">
+                                    <span class="text-gray-300 text-sm">Melakukan simulasi logika offline untuk mencegah pergerakan tak terduga.</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-safety hover:bg-safetyHover text-darker font-bold py-3 rounded-lg shadow-lg shadow-safety/20 transition-all transform hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-safety/50">
+                            Cek Skor Kuis
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-darker pt-16 pb-8 border-t border-white/10 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
+                <!-- Logo Footer -->
+                <div class="flex items-center gap-3">
+                    <svg class="h-8 w-8 text-safety opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <div>
+                        <span class="block font-bold text-lg text-white">Politeknik Perkapalan Negeri Surabaya</span>
+                        <span class="block text-sm text-gray-400">Program Studi Teknik Otomasi</span>
+                    </div>
+                </div>
+
+                <!-- Emergency Contact Manual -->
+                <div class="text-center md:text-right mt-6 md:mt-0">
+                    <span class="block text-sm font-semibold text-gray-400 mb-3">Lapor Insiden / Darurat (Telepon/WA)</span>
+                    <div class="inline-flex items-center gap-2 text-white font-bold bg-card border border-white/10 px-5 py-3 rounded-lg shadow-lg">
+                        <i class="ph-fill ph-phone-call text-2xl text-safety"></i>
+                        <span class="tracking-wider">+62 815 5444 6695</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
+                <p>&copy; 2026 Teknik Otomasi PPNS - Safety First, Automation Next.</p>
+                <div class="flex space-x-4">
+                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition-colors">Terms of Lab Use</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    </div> <!-- END MAIN APP WRAPPER -->
+
+    <!-- CUSTOM MODAL (Digunakan sebagai pengganti alert) -->
+    <div id="result-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/80 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+        <div class="bg-card border border-white/10 p-8 rounded-2xl max-w-md w-full mx-4 shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col items-center" id="modal-content-box">
+            <div id="modal-icon" class="w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-4 text-3xl">
+                <!-- Icon disuntikkan via JS -->
+            </div>
+            <h3 id="modal-title" class="text-2xl font-bold text-center text-white mb-2">Judul Modal</h3>
+            <p id="modal-desc" class="text-center text-gray-300 mb-6">Deskripsi modal.</p>
+            
+            <!-- Tombol Tambahan Dinamis (Contoh untuk Sertifikat) -->
+            <button id="modal-action-btn" class="hidden w-full bg-safety hover:bg-safetyHover text-darker font-bold py-3 rounded-lg transition-colors focus:outline-none focus:ring-4 focus:ring-safety/50 mb-3" onclick="cetakSertifikat()">
+                Cetak Paspor Masuk Lab
+            </button>
+
+            <button onclick="closeModal()" class="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 rounded-lg transition-colors focus:outline-none focus:ring-4 focus:ring-gray-500">
+                Tutup
+            </button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // 0. Login Logic System
+        function handleLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+
+            if(user === 'PPNS' && pass === 'SUCCESS') {
+                // Sembunyikan layar login
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('login-screen').classList.remove('flex');
+                
+                // Tampilkan aplikasi utama
+                const mainApp = document.getElementById('main-app');
+                mainApp.classList.remove('hidden');
+                mainApp.classList.add('flex');
+                
+                // Reset scroll ke paling atas
+                window.scrollTo(0, 0); 
+            } else {
+                showCustomModal('Akses Ditolak', 'Username atau Password salah! (Silahkan gunakan demo: PPNS / SUCCESS)', 'ph-fill ph-x-circle text-red-400', 'bg-red-500/20 border-red-500/50');
+            }
+        }
+
+        // 0.1 Fitur Lihat SOP (Menggantikan Download)
+        function lihatSOP() {
+            const detailSOP = `
+                <div class="text-left text-sm text-gray-300 space-y-3 mt-4">
+                    <p><strong>1. Kewajiban APD:</strong> Tidak ada mahasiswa yang diizinkan mengoperasikan panel tanpa Wearpack dan Sepatu Safety.</p>
+                    <p><strong>2. Batas Tegangan:</strong> Manipulasi sirkuit (wiring ulang) HANYA boleh dilakukan saat tegangan utama <strong>0 Volt</strong> (Mati).</p>
+                    <p><strong>3. Troubleshooting:</strong> Dilarang memasukkan tangan ke dalam panel 380V; gunakan selalu tespen atau multimeter probe panjang.</p>
+                    <p><strong>4. Pelaporan:</strong> Segera lapor ke Teknisi jika tercium bau komponen terbakar atau asap.</p>
+                </div>
+            `;
+            showCustomModal('Ringkasan SOP Keselamatan', detailSOP, 'ph-fill ph-shield-check text-blue-400', 'bg-blue-500/20 border-blue-500/50');
+        }
+
+        // 0.2 Fitur Cetak Sertifikat Mockup
+        function cetakSertifikat() {
+            closeModal();
+            setTimeout(() => {
+                showCustomModal('Sertifikat Berhasil Dicetak!', 'E-Sertifikat/Paspor Lab telah aktif! Tunjukkan pop-up ini kepada Asisten Laboratorium hari ini sebagai bukti kesiapan.', 'ph-fill ph-medal text-safety', 'bg-safety/20 border-safety/50', false);
+            }, 400);
+        }
+
+        // 1. Mobile Menu Toggle Logic
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // Hide mobile menu on link click
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+            });
+        });
+
+        // 2. Accordion Logic
+        function toggleAccordion(contentId, iconId) {
+            const content = document.getElementById(contentId);
+            const icon = document.getElementById(iconId);
+            
+            // Toggle current
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+                icon.classList.remove('rotate-180');
+            } else {
+                // Close others optionally (uncomment below if you want mutually exclusive accordions)
+                /*
+                document.querySelectorAll('.accordion-content').forEach(el => el.classList.remove('open'));
+                document.querySelectorAll('.ph-caret-down').forEach(el => el.classList.remove('rotate-180'));
+                */
+                
+                content.classList.add('open');
+                icon.classList.add('rotate-180');
+            }
+        }
+
+        // 3. Checklist Logic
+        let currentChecklistPercentage = 0; // Track untuk gamifikasi Kuis & Checklist
+
+        function updateChecklist() {
+            const checkboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]');
+            const total = checkboxes.length;
+            let checkedCount = 0;
+
+            checkboxes.forEach(box => {
+                if(box.checked) checkedCount++;
+            });
+
+            currentChecklistPercentage = Math.round((checkedCount / total) * 100);
+            
+            const progressBar = document.getElementById('checklist-progress');
+            const progressText = document.getElementById('checklist-percentage');
+
+            progressBar.style.width = currentChecklistPercentage + '%';
+            progressText.innerText = currentChecklistPercentage + '%';
+
+            if(currentChecklistPercentage === 100) {
+                progressText.classList.add('text-green-400');
+                progressText.innerText = '100% - Siap Praktikum!';
+                progressBar.classList.remove('bg-safety');
+                progressBar.classList.add('bg-green-500');
+            } else {
+                progressBar.classList.add('bg-safety');
+                progressBar.classList.remove('bg-green-500');
+                progressText.classList.remove('text-green-400');
+            }
+        }
+
+        // 4. Quiz Validation and Modal Logic (No Alert)
+        const correctAnswers = {
+            q1: 'B',
+            q2: 'B',
+            q3: 'C'
+        };
+
+        function submitQuiz(event) {
+            event.preventDefault(); // Prevent page reload
+
+            const form = event.target;
+            const data = new FormData(form);
+            let score = 0;
+            let totalQuestions = 3;
+
+            // Check answers
+            if(data.get('q1') === correctAnswers.q1) score++;
+            if(data.get('q2') === correctAnswers.q2) score++;
+            if(data.get('q3') === correctAnswers.q3) score++;
+
+            // Prepare Modal Content based on score
+            let title = '';
+            let desc = '';
+            let iconClass = '';
+            let iconBg = '';
+            let showActionBtn = false; // Untuk memunculkan tombol cetak paspor
+
+            if(score === 3) {
+                // Syarat Sertifikat: Skor Kuis Penuh & Checklist Penuh
+                if(currentChecklistPercentage === 100) {
+                    title = 'Lulus K3 Sepenuhnya!';
+                    desc = `Skor Kuis: ${score}/${totalQuestions} & Checklist Kesiapan: 100%. Anda resmi diizinkan masuk dan mengikuti praktikum.`;
+                    iconClass = 'ph-fill ph-medal text-safety';
+                    iconBg = 'bg-safety/20 border-safety/50';
+                    showActionBtn = true;
+                } else {
+                    title = 'Luar Biasa!';
+                    desc = `Skor Kuis Anda sempurna (${score}/${totalQuestions}). Namun Anda belum mencentang seluruh "Checklist Kesiapan". Lengkapi dulu untuk mencetak paspor lab!`;
+                    iconClass = 'ph-fill ph-check-circle text-green-400';
+                    iconBg = 'bg-green-500/20 border-green-500/50';
+                }
+            } else if (score === 2) {
+                title = 'Cukup Baik!';
+                desc = `Skor Anda: ${score}/${totalQuestions}. Anda memahami sebagian besar, namun mari pelajari ulang bagian yang terlewat.`;
+                iconClass = 'ph-fill ph-warning-circle text-safety';
+                iconBg = 'bg-safety/20 border-safety/50';
+            } else {
+                title = 'Perlu Belajar Lagi';
+                desc = `Skor Anda: ${score}/${totalQuestions}. Keselamatan adalah nomor satu, pelajari kembali materi di atas sebelum praktik.`;
+                iconClass = 'ph-fill ph-x-circle text-red-400';
+                iconBg = 'bg-red-500/20 border-red-500/50';
+            }
+
+            // Populate Modal
+            showCustomModal(title, desc, iconClass, iconBg, showActionBtn);
+        }
+
+        // 5. Fungsi Render Modal Universal
+        function showCustomModal(title, desc, iconClass, iconBg, showActionBtn = false) {
+            document.getElementById('modal-title').innerText = title;
+            // Gunakan innerHTML agar bisa merender tag <strong> atau layout HTML khusus dari ringkasan SOP
+            document.getElementById('modal-desc').innerHTML = desc;
+            
+            const iconContainer = document.getElementById('modal-icon');
+            iconContainer.className = `w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-4 text-4xl border ${iconBg}`;
+            iconContainer.innerHTML = `<i class="${iconClass}"></i>`;
+
+            const actionBtn = document.getElementById('modal-action-btn');
+            if (showActionBtn) {
+                actionBtn.classList.remove('hidden');
+            } else {
+                actionBtn.classList.add('hidden');
+            }
+
+            showModal();
+        }
+
+        function showModal() {
+            const modal = document.getElementById('result-modal');
+            const box = document.getElementById('modal-content-box');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            // Allow display block to render before triggering opacity transition
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                box.classList.remove('scale-95');
+                box.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('result-modal');
+            const box = document.getElementById('modal-content-box');
+            
+            modal.classList.add('opacity-0');
+            box.classList.remove('scale-100');
+            box.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300); // match duration-300
+        }
+    </script>
+</body>
+</html>
+```
